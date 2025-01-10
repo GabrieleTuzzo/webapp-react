@@ -1,9 +1,12 @@
 import { Outlet } from 'react-router';
+import CustomNavbar from '../components/CustomNavbar';
 
 export default function DefaultLayout() {
     return (
         <>
-            <header>Hello Layout</header>
+            <header>
+                <CustomNavbar />
+            </header>
             <main>
                 <Outlet></Outlet>
             </main>

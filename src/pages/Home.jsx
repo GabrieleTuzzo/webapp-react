@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router';
 import CustomCard from '../components/CustomCard';
 
 export default function Home() {
@@ -23,11 +24,13 @@ export default function Home() {
             <Row className="mt-5">
                 {movies.map((movie, i) => (
                     <Col key={i}>
-                        <CustomCard
-                            title={movie.title}
-                            image={movie.image}
-                            abstract={movie.abstract}
-                        ></CustomCard>
+                        <Link to={`/${movie.id}`}>
+                            <CustomCard
+                                title={movie.title}
+                                image={movie.image}
+                                abstract={movie.abstract}
+                            ></CustomCard>
+                        </Link>
                     </Col>
                 ))}
             </Row>

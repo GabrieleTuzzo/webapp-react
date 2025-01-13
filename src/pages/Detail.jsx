@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 export default function Detail() {
     const params = useParams();
     const [movie, setMovie] = useState({});
+    const [review, setReview] = useState({ name: '', text: '', vote: '' });
 
     useEffect(() => {
         axios
@@ -18,9 +19,32 @@ export default function Detail() {
             });
     }, [params.id]);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setReview((prevReview) => ({ ...prevReview, [name]: value }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios
+            .post(
+                `${import.meta.env.VITE_ENV_URI}/movies/${params.id}/review`,
+                review
+            )
+            .then((res) => {
+                setReview({ name: '', text: '', vote: '' });
+                setMovie((prevMovie) => ({
+                    ...prevMovie,
+                    reviews: [...prevMovie.reviews, res.data],
+                }));
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
     return (
         <div className="container mt-5">
-            {/* Movie Details Section */}
             <div className="row mb-4">
                 <div className="col-md-4">
                     <img
@@ -42,13 +66,11 @@ export default function Detail() {
                 </div>
             </div>
 
-            {/* Abstract Section */}
             <div className="mb-4">
                 <h2 className="mb-3">Abstract</h2>
                 <p>{movie.abstract}</p>
             </div>
 
-            {/* Reviews Section */}
             <div>
                 <h2 className="mb-3">Reviews</h2>
                 <div className="list-group">
@@ -66,6 +88,59 @@ export default function Detail() {
                             </div>
                         ))}
                 </div>
+            </div>
+
+            <div className="mt-4">
+                <h2>Add Your Review</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label htmlFor="name" className="form-label">
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            className="form-control"
+                            value={review.name}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="text" className="form-label">
+                            Review
+                        </label>
+                        <textarea
+                            id="text"
+                            name="text"
+                            className="form-control"
+                            rows="3"
+                            value={review.text}
+                            onChange={handleInputChange}
+                            required
+                        ></textarea>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="vote" className="form-label">
+                            Vote
+                        </label>
+                        <input
+                            type="number"
+                            id="vote"
+                            name="vote"
+                            className="form-control"
+                            value={review.vote}
+                            onChange={handleInputChange}
+                            min="1"
+                            max="5"
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary">
+                        Submit Review
+                    </button>
+                </form>
             </div>
         </div>
     );

@@ -3,10 +3,14 @@ import DefaultLayout from './layouts/DefaultLayout';
 import Home from './pages/Home';
 import Detail from './pages/Detail';
 import './App.css';
+import { useState } from 'react';
+import GlobalContext from './contexts/globalContext';
 
 function App() {
+    const [isLoading, setIsLoading] = useState(false);
+
     return (
-        <>
+        <GlobalContext.Provider value={{ isLoading, setIsLoading }}>
             <BrowserRouter>
                 <Routes>
                     <Route element={<DefaultLayout />}>
@@ -15,7 +19,7 @@ function App() {
                     </Route>
                 </Routes>
             </BrowserRouter>
-        </>
+        </GlobalContext.Provider>
     );
 }
 

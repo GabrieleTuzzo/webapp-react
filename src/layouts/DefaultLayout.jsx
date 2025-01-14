@@ -1,7 +1,12 @@
 import { Outlet } from 'react-router';
 import CustomNavbar from '../components/CustomNavbar';
+import Loader from '../components/Loader';
+import { useContext } from 'react';
+import GlobalContext from '../contexts/globalContext';
 
 export default function DefaultLayout() {
+    const { isLoading } = useContext(GlobalContext);
+
     return (
         <>
             <header>
@@ -10,6 +15,7 @@ export default function DefaultLayout() {
             <main>
                 <Outlet></Outlet>
             </main>
+            {isLoading && <Loader />}
         </>
     );
 }

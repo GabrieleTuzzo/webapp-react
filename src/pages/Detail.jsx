@@ -1,22 +1,16 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import GlobalContext from '../contexts/globalContext';
 
 export default function Detail() {
     const params = useParams();
     const [movie, setMovie] = useState({});
     const [review, setReview] = useState({ name: '', text: '', vote: '' });
+    const { setIsLoading } = useContext(GlobalContext);
 
     useEffect(() => {
-        axios
-            .get(`${import.meta.env.VITE_ENV_URI}/movies/${params.id}`)
-            .then((res) => {
-                setMovie(res.data);
-                console.log(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        fetchMovie();
     }, [params.id]);
 
     const handleInputChange = (e) => {
@@ -26,6 +20,28 @@ export default function Detail() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        fetchReviews();
+    };
+
+    function fetchMovie() {
+        setIsLoading(true);
+
+        axios
+            .get(`${import.meta.env.VITE_ENV_URI}/movies/${params.id}`)
+            .then((res) => {
+                setMovie(res.data);
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }
+
+    function fetchReviews() {
         axios
             .post(
                 `${import.meta.env.VITE_ENV_URI}/movies/${params.id}/review`,
@@ -33,15 +49,12 @@ export default function Detail() {
             )
             .then((res) => {
                 setReview({ name: '', text: '', vote: '' });
-                setMovie((prevMovie) => ({
-                    ...prevMovie,
-                    reviews: [...prevMovie.reviews, res.data],
-                }));
+                fetchMovie();
             })
             .catch((err) => {
                 console.error(err);
             });
-    };
+    }
 
     return (
         <div className="container mt-5">

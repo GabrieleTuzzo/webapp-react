@@ -1,13 +1,15 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router';
 import CustomCard from '../components/CustomCard';
+import GlobalContext from '../contexts/globalContext';
 
 export default function Home() {
     const [movies, setMovies] = useState([]);
+    const { setIsLoading } = useContext(GlobalContext);
 
-    useEffect(() => {
+    function fetchMovies() {
         axios
             .get(`${import.meta.env.VITE_ENV_URI}/movies`)
             .then((res) => {
@@ -17,6 +19,14 @@ export default function Home() {
             .catch((err) => {
                 console.error(err);
             });
+    }
+
+    useEffect(() => {
+        setIsLoading(true);
+
+        fetchMovies();
+
+        setIsLoading(false);
     }, []);
 
     return (
